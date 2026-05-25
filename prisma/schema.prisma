@@ -1,0 +1,91 @@
+# This is your Prisma schema file,
+# learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id            String     @id @default(cuid())
+  clerkId       String     @unique
+  email         String     @unique
+  name          String
+  username      String     @unique
+  bio           String?
+  headline      String?
+  profileImage  String?
+  resumeUrl     String?
+  theme         String     @default("minimal")
+  createdAt     DateTime   @default(now())
+  updatedAt     DateTime   @updatedAt
+  
+  projects      Project[]
+  skills        Skill[]
+  education     Education[]
+  experience    Experience[]
+}
+
+model Project {
+  id            String     @id @default(cuid())
+  userId        String
+  user          User       @relation(fields: [userId], references: [id], onDelete: Cascade)
+  title         String
+  description   String
+  imageUrl      String?
+  githubUrl     String?
+  liveUrl       String?
+  order         Int        @default(0)
+  createdAt     DateTime   @default(now())
+  updatedAt     DateTime   @updatedAt
+  
+  @@index([userId])
+}
+
+model Skill {
+  id            String     @id @default(cuid())
+  userId        String
+  user          User       @relation(fields: [userId], references: [id], onDelete: Cascade)
+  name          String
+  level         String     @default("intermediate")
+  order         Int        @default(0)
+  createdAt     DateTime   @default(now())
+  
+  @@index([userId])
+}
+
+model Education {
+  id            String     @id @default(cuid())
+  userId        String
+  user          User       @relation(fields: [userId], references: [id], onDelete: Cascade)
+  school        String
+  degree        String
+  field         String
+  startDate     DateTime
+  endDate       DateTime?
+  current       Boolean    @default(false)
+  order         Int        @default(0)
+  createdAt     DateTime   @default(now())
+  
+  @@index([userId])
+}
+
+model Experience {
+  id            String     @id @default(cuid())
+  userId        String
+  user          User       @relation(fields: [userId], references: [id], onDelete: Cascade)
+  company       String
+  position      String
+  description   String?
+  startDate     DateTime
+  endDate       DateTime?
+  current       Boolean    @default(false)
+  order         Int        @default(0)
+  createdAt     DateTime   @default(now())
+  
+  @@index([userId])
+}
