@@ -6,6 +6,9 @@ const mockPortfolios: Record<string, any> = {
     name: 'Rahul Sharma',
     headline: 'Full Stack Developer',
     bio: 'Passionate about building scalable web applications with modern technologies.',
+    email: 'rahul.sharma@example.com',
+    githubUrl: 'https://github.com/rahul',
+    phone: '+91 98765 43210',
     skills: ['React', 'Next.js', 'TypeScript', 'Node.js', 'PostgreSQL', 'Tailwind CSS'],
     projects: [
       {
@@ -39,6 +42,9 @@ const mockPortfolios: Record<string, any> = {
     name: 'John Designer',
     headline: 'UI/UX Designer & Product Manager',
     bio: 'Creating beautiful and functional digital experiences.',
+    email: 'john.designer@example.com',
+    githubUrl: 'https://github.com/johndesigner',
+    phone: '+1 555 123 4567',
     skills: ['Figma', 'UI Design', 'UX Research', 'Prototyping', 'Product Strategy'],
     projects: [],
     experience: [],
@@ -55,11 +61,38 @@ export async function GET(
     const username = params.username.toLowerCase();
     const portfolio = mockPortfolios[username];
 
-    if (!portfolio) {
-      return NextResponse.json({ error: 'Portfolio not found' }, { status: 404 });
+    if (portfolio) {
+      return NextResponse.json(portfolio);
     }
 
-    return NextResponse.json(portfolio);
+    const fallbackName = username
+      .split(/[-_.]/g)
+      .map(part => part.charAt(0).toUpperCase() + part.slice(1))
+      .join(' ');
+
+    const fallbackPortfolio = {
+      name: fallbackName || 'Portfolio Creator',
+      headline: 'Modern professional portfolio',
+      bio: 'A polished portfolio showcasing skills, work, and experience.',
+      email: 'hello@example.com',
+      githubUrl: 'https://github.com',
+      phone: '+1 234 567 890',
+      skills: ['Web Development', 'Design Systems', 'UI/UX', 'Product Strategy'],
+      projects: [
+        {
+          id: '1',
+          title: 'SaaS Landing Page',
+          description: 'An elegant landing page design built for conversion and clarity.',
+          githubUrl: 'https://github.com',
+          liveUrl: 'https://example.com',
+        },
+      ],
+      experience: [],
+      education: [],
+      theme: 'minimal',
+    };
+
+    return NextResponse.json(fallbackPortfolio);
   } catch (error) {
     return NextResponse.json(
       { error: 'Internal server error' },

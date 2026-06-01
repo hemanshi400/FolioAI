@@ -2,12 +2,15 @@
 
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
+import { useUser } from '@clerk/nextjs';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Upload, Sparkles } from 'lucide-react';
 
 export default function NewProjectPage() {
   const router = useRouter();
+  const { user } = useUser();
+  const username = user?.username || user?.id;
   const [formData, setFormData] = useState({
     title: '',
     description: '',
@@ -36,6 +39,24 @@ export default function NewProjectPage() {
       });
 
       if (response.ok) {
+        if (typeof window !== 'undefined' && username) {
+          const storageKey = `folioai-portfolio-${username}`;
+          const storedData = window.localStorage.getItem(storageKey);
+
+          if (storedData) {
+            try {
+              const parsed = JSON.parse(storedData);
+              parsed.projects = [
+                ...(Array.isArray(parsed.projects) ? parsed.projects : []),
+                { id: `project-${Date.now()}`, ...formData },
+              ];
+              window.localStorage.setItem(storageKey, JSON.stringify(parsed));
+            } catch (error) {
+              console.error('Failed to update saved portfolio:', error);
+            }
+          }
+        }
+
         router.push('/dashboard/projects');
       }
     } catch (error) {

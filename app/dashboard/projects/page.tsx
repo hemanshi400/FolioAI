@@ -1,12 +1,15 @@
 'use client';
 
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import Link from 'next/link';
+import { useUser } from '@clerk/nextjs';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Plus, Edit, Trash2 } from 'lucide-react';
 
 export default function ProjectsPage() {
+  const { user, isLoaded } = useUser();
+  const username = user?.username || user?.id;
   const [projects, setProjects] = useState([
     {
       id: '1',
@@ -24,8 +27,43 @@ export default function ProjectsPage() {
     },
   ]);
 
+  useEffect(() => {
+    if (!isLoaded || !username) return;
+
+    const storageKey = `folioai-portfolio-${username}`;
+    if (typeof window === 'undefined') return;
+
+    const storedData = window.localStorage.getItem(storageKey);
+    if (!storedData) return;
+
+    try {
+      const parsed = JSON.parse(storedData);
+      if (Array.isArray(parsed.projects) && parsed.projects.length > 0) {
+        setProjects(parsed.projects);
+      }
+    } catch (error) {
+      console.error('Failed to load saved projects:', error);
+    }
+  }, [isLoaded, username]);
+
+  useEffect(() => {
+    if (!isLoaded || !username || typeof window === 'undefined') return;
+
+    const storageKey = `folioai-portfolio-${username}`;
+    const storedData = window.localStorage.getItem(storageKey);
+    if (!storedData) return;
+
+    try {
+      const parsed = JSON.parse(storedData);
+      parsed.projects = projects;
+      window.localStorage.setItem(storageKey, JSON.stringify(parsed));
+    } catch (error) {
+      console.error('Failed to save project updates:', error);
+    }
+  }, [projects, isLoaded, username]);
+
   const handleDelete = (id: string) => {
-    setProjects(projects.filter(p => p.id !== id));
+    setProjects(prev => prev.filter(p => p.id !== id));
   };
 
   return (
@@ -50,7 +88,7 @@ export default function ProjectsPage() {
           <Card>
             <CardContent className="pt-6 text-center">
               <p className="text-gray-600 dark:text-gray-400 mb-4">
-                You haven't added any projects yet.
+                You haven&apos;t added any projects yet.
               </p>
               <Link href="/dashboard/projects/new">
                 <Button>Create Your First Project</Button>

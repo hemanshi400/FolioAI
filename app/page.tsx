@@ -303,7 +303,7 @@ export default function Home() {
           >
             <h2 className="text-4xl font-bold mb-4">Ready to showcase your work?</h2>
             <p className="text-primary-100 text-lg mb-8">
-              Join thousands of professionals who've created their perfect portfolio with FolioAI.
+              Join thousands of professionals who&apos;ve created their perfect portfolio with FolioAI.
             </p>
             <Link href="/sign-up">
               <Button size="lg" variant="secondary">
