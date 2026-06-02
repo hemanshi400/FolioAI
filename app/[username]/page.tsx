@@ -50,6 +50,7 @@ export default function PortfolioPage() {
   const [portfolio, setPortfolio] = useState<PortfolioData | null>(null);
   const [loading, setLoading] = useState(true);
   const [selectedProject, setSelectedProject] = useState<Project | null>(null);
+  const [bgImage, setBgImage] = useState<string | null>(null);
 
   useEffect(() => {
     if (!username) return;
@@ -77,7 +78,6 @@ export default function PortfolioPage() {
         setLoading(false);
       }
     };
-
     const handleStorage = (event: StorageEvent) => {
       if (event.key === storageKey) {
         if (event.newValue) {
@@ -86,7 +86,17 @@ export default function PortfolioPage() {
       }
     };
 
+    // Pick a random background from public/backgrounds/bg1..bg9 (if present)
+    const chooseRandomBackground = () => {
+      if (typeof window === 'undefined') return;
+      const possible = Array.from({ length: 9 }).map((_, i) => `/backgrounds/bg${i + 1}.jpg`);
+      // pick a random one; the browser will 404 if not present and fallback to gradient
+      const pick = possible[Math.floor(Math.random() * possible.length)];
+      setBgImage(pick);
+    };
+
     loadPortfolio();
+    chooseRandomBackground();
     window.addEventListener('storage', handleStorage);
 
     return () => {
@@ -116,7 +126,16 @@ export default function PortfolioPage() {
   }
 
   return (
-    <div className="min-h-screen bg-slate-50 dark:bg-slate-950 text-slate-900 dark:text-slate-100">
+    <div className="relative min-h-screen text-slate-900 dark:text-slate-100">
+      {/* Background image layer */}
+      <div
+        aria-hidden
+        className="absolute inset-0 bg-cover bg-center"
+        style={bgImage ? { backgroundImage: `url(${bgImage})` } : undefined}
+      />
+      {/* Light overlay to make background feel lighter and keep content readable */}
+      <div className="absolute inset-0 bg-white/70 dark:bg-black/20" />
+      <div className="relative bg-transparent min-h-screen">
       <section className="relative overflow-hidden bg-gradient-to-br from-slate-50 via-white to-slate-100 dark:from-slate-950 dark:via-slate-900 dark:to-slate-950 border-b border-slate-200 dark:border-slate-800">
         <div className="absolute inset-x-0 top-0 h-72 bg-[radial-gradient(circle_at_top,_rgba(99,102,241,0.18),_transparent_40%)] blur-3xl" />
         <div className="relative max-w-7xl mx-auto px-4 py-20 lg:grid lg:grid-cols-[1.1fr_0.9fr] lg:items-center gap-12">
@@ -148,6 +167,7 @@ export default function PortfolioPage() {
           </div>
         </div>
       </section>
+      </div>
 
       {portfolio.skills.length > 0 && (
         <section className="px-4 py-16 lg:py-20">
