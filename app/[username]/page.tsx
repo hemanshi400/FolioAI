@@ -90,9 +90,16 @@ export default function PortfolioPage() {
     const chooseRandomBackground = () => {
       if (typeof window === 'undefined') return;
       const possible = Array.from({ length: 9 }).map((_, i) => `/backgrounds/bg${i + 1}.jpg`);
-      // pick a random one; the browser will 404 if not present and fallback to gradient
+      // pick a random one; if no images exist, this will be undefined and fallback to gradient
       const pick = possible[Math.floor(Math.random() * possible.length)];
-      setBgImage(pick);
+      // Try to load the image; if it fails (404), it will fallback to the gradient
+      const img = new Image();
+      img.onload = () => setBgImage(pick);
+      img.onerror = () => {
+        // Image doesn't exist, leave bgImage as null to show gradient fallback
+        console.log('No background image available, using gradient');
+      };
+      img.src = pick;
     };
 
     loadPortfolio();
@@ -127,16 +134,16 @@ export default function PortfolioPage() {
 
   return (
     <div className="relative min-h-screen text-slate-900 dark:text-slate-100">
-      {/* Background image layer */}
+      {/* Background image layer with gradient fallback */}
       <div
         aria-hidden
-        className="absolute inset-0 bg-cover bg-center"
-        style={bgImage ? { backgroundImage: `url(${bgImage})` } : undefined}
+        className="fixed inset-0 bg-cover bg-center bg-no-repeat bg-gradient-to-br from-slate-100 via-blue-50 to-slate-100 dark:from-slate-900 dark:via-slate-950 dark:to-slate-900"
+        style={bgImage ? { backgroundImage: `url(${bgImage})`, backgroundSize: 'cover', backgroundPosition: 'center' } : {}}
       />
-      {/* Light overlay to make background feel lighter and keep content readable */}
-      <div className="absolute inset-0 bg-white/70 dark:bg-black/20" />
-      <div className="relative bg-transparent min-h-screen">
-      <section className="relative overflow-hidden bg-gradient-to-br from-slate-50 via-white to-slate-100 dark:from-slate-950 dark:via-slate-900 dark:to-slate-950 border-b border-slate-200 dark:border-slate-800">
+      {/* Subtle overlay for readability */}
+      <div className="fixed inset-0 bg-white/30 dark:bg-black/40" />
+      <div className="relative z-10 bg-transparent min-h-screen">
+      <section className="relative overflow-hidden bg-white/80 dark:bg-slate-950/80 backdrop-blur-sm border-b border-slate-200 dark:border-slate-800">
         <div className="absolute inset-x-0 top-0 h-72 bg-[radial-gradient(circle_at_top,_rgba(99,102,241,0.18),_transparent_40%)] blur-3xl" />
         <div className="relative max-w-7xl mx-auto px-4 py-20 lg:grid lg:grid-cols-[1.1fr_0.9fr] lg:items-center gap-12">
           <div className="space-y-8 pt-10 lg:pt-0">
@@ -170,7 +177,7 @@ export default function PortfolioPage() {
       </div>
 
       {portfolio.skills.length > 0 && (
-        <section className="px-4 py-16 lg:py-20">
+        <section className="relative px-4 py-16 lg:py-20 bg-white/50 dark:bg-slate-950/50 backdrop-blur-sm">
           <div className="max-w-6xl mx-auto">
             <div className="flex flex-col gap-4 md:flex-row md:items-center md:justify-between mb-10">
               <div>
@@ -184,7 +191,7 @@ export default function PortfolioPage() {
               {portfolio.skills.map((skill, idx) => (
                 <span
                   key={idx}
-                  className="rounded-full border border-slate-200 bg-slate-100 px-4 py-2 text-sm font-medium text-slate-700 dark:border-slate-800 dark:bg-slate-800 dark:text-slate-200"
+                  className="rounded-full border border-slate-200 bg-white/80 dark:bg-slate-800/80 px-4 py-2 text-sm font-medium text-slate-700 dark:text-slate-200 backdrop-blur"
                 >
                   {skill}
                 </span>
@@ -194,9 +201,9 @@ export default function PortfolioPage() {
         </section>
       )}
 
-      <section className="px-4 py-16 lg:py-20 bg-white dark:bg-slate-950">
+      <section className="relative px-4 py-16 lg:py-20 bg-white/70 dark:bg-slate-950/70 backdrop-blur-sm">
         <div className="max-w-6xl mx-auto">
-          <div className="rounded-[2rem] border border-slate-200 bg-slate-50 p-8 shadow-sm dark:border-slate-800 dark:bg-slate-900">
+          <div className="rounded-[2rem] border border-slate-200/60 bg-white/80 dark:bg-slate-900/80 backdrop-blur p-8 shadow-sm dark:border-slate-800">
             <div className="flex flex-col gap-6 md:flex-row md:items-center md:justify-between">
               <div>
                 <h2 className="text-3xl font-semibold">Contact</h2>
@@ -271,7 +278,7 @@ export default function PortfolioPage() {
       )}
 
       {portfolio.projects.length > 0 && (
-        <section className="px-4 pb-16 lg:pb-24">
+        <section className="relative px-4 pb-16 lg:pb-24 bg-white/50 dark:bg-slate-950/50 backdrop-blur-sm">
           <div className="max-w-6xl mx-auto">
             <div className="flex flex-col gap-4 md:flex-row md:items-end md:justify-between mb-10">
               <div>
@@ -285,7 +292,7 @@ export default function PortfolioPage() {
               {portfolio.projects.map(project => (
                 <div
                   key={project.id}
-                  className="relative overflow-hidden rounded-[2rem] border border-slate-200 bg-white p-0 shadow-lg cursor-pointer hover:shadow-2xl dark:border-slate-800 dark:bg-slate-900"
+                  className="relative overflow-hidden rounded-[2rem] border border-slate-200/60 bg-white/80 dark:bg-slate-900/80 p-0 shadow-lg cursor-pointer hover:shadow-2xl dark:border-slate-800 backdrop-blur"
                   onClick={() => setSelectedProject(project)}
                 >
                   <div className="h-64 w-full bg-gray-100 flex items-center justify-center overflow-hidden rounded-t-[2rem]">
@@ -313,7 +320,7 @@ export default function PortfolioPage() {
       )}
 
       {portfolio.experience.length > 0 && (
-        <section className="px-4 py-16 lg:py-20 bg-slate-50 dark:bg-slate-950">
+        <section className="relative px-4 py-16 lg:py-20 bg-white/70 dark:bg-slate-950/70 backdrop-blur-sm">
           <div className="max-w-6xl mx-auto">
             <div className="mb-10">
               <h2 className="text-3xl font-semibold">Experience</h2>
@@ -325,7 +332,7 @@ export default function PortfolioPage() {
               {portfolio.experience.map((exp, idx) => (
                 <div
                   key={idx}
-                  className="rounded-[2rem] border border-slate-200 bg-white p-8 shadow-sm dark:border-slate-800 dark:bg-slate-900"
+                  className="rounded-[2rem] border border-slate-200/60 bg-white/80 dark:bg-slate-900/80 p-8 shadow-sm dark:border-slate-800 backdrop-blur"
                 >
                   <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
                     <div>
@@ -352,7 +359,7 @@ export default function PortfolioPage() {
       )}
 
       {portfolio.education.length > 0 && (
-        <section className="px-4 py-16 lg:py-20">
+        <section className="relative px-4 py-16 lg:py-20 bg-white/50 dark:bg-slate-950/50 backdrop-blur-sm">
           <div className="max-w-6xl mx-auto">
             <div className="mb-10">
               <h2 className="text-3xl font-semibold">Education</h2>
@@ -364,7 +371,7 @@ export default function PortfolioPage() {
               {portfolio.education.map((edu, idx) => (
                 <div
                   key={idx}
-                  className="rounded-[2rem] border border-slate-200 bg-white p-8 shadow-sm dark:border-slate-800 dark:bg-slate-900"
+                  className="rounded-[2rem] border border-slate-200/60 bg-white/80 dark:bg-slate-900/80 p-8 shadow-sm dark:border-slate-800 backdrop-blur"
                 >
                   <h3 className="text-2xl font-semibold">{edu.degree}</h3>
                   <p className="text-primary-600 dark:text-primary-300 font-medium mt-2">
@@ -380,7 +387,7 @@ export default function PortfolioPage() {
         </section>
       )}
 
-      <footer className="px-4 py-12 bg-slate-900 text-slate-300">
+      <footer className="relative px-4 py-12 bg-slate-900/90 dark:bg-slate-950 text-slate-300 backdrop-blur">
         <div className="max-w-6xl mx-auto text-center">
           <p>Built with FolioAI</p>
         </div>
