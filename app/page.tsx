@@ -230,6 +230,7 @@ export default function Home() {
                 name: 'Starter',
                 price: 'Free',
                 description: 'Perfect for getting started',
+                href: '/sign-up',
                 features: ['1 Portfolio', 'Basic Themes', 'Resume Upload', 'Project Showcase'],
               },
               {
@@ -237,6 +238,7 @@ export default function Home() {
                 price: '$9',
                 period: '/month',
                 description: 'For professionals',
+                href: '/sign-up',
                 features: [
                   'Unlimited Portfolios',
                   'All Themes',
@@ -251,6 +253,7 @@ export default function Home() {
                 price: '$29',
                 period: '/month',
                 description: 'For agencies',
+                href: '/sign-up',
                 features: [
                   'Unlimited Everything',
                   'Team Management',
@@ -276,9 +279,11 @@ export default function Home() {
                   {plan.period && <span className="text-gray-600 dark:text-gray-400">{plan.period}</span>}
                 </div>
                 <p className="text-gray-600 dark:text-gray-400 mb-6">{plan.description}</p>
-                <Button className="w-full mb-8" variant={plan.highlighted ? 'default' : 'outline'}>
-                  Get Started
-                </Button>
+                <Link href={plan.href} className="block mb-8">
+                  <Button className="w-full" variant={plan.highlighted ? 'default' : 'outline'}>
+                    Get Started
+                  </Button>
+                </Link>
                 <ul className="space-y-3">
                   {plan.features.map((feature, i) => (
                     <li key={i} className="flex gap-3">
