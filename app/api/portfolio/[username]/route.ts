@@ -54,10 +54,13 @@ const mockPortfolios: Record<string, any> = {
 };
 
 export async function GET(
-  request: NextRequest,
-  { params }: { params: { username: string } }
+  request: Request,
+  { params }: { params: Promise<{ username: string }> }
 ) {
-  try {
+  const { username } = await params;
+
+  // rest of your code
+}
     const username = params.username.toLowerCase();
     const portfolio = mockPortfolios[username];
 
