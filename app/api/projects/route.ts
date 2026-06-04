@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { auth } from '@clerk/nextjs/server';
 
-export async function GET(request: NextRequest) {
+export async function GET(_request: NextRequest) {
   try {
     const { userId } = await auth();
 
@@ -10,7 +10,7 @@ export async function GET(request: NextRequest) {
     }
 
     // TODO: Fetch projects from database
-    const projects = [];
+    const projects: any[] = [];
 
     return NextResponse.json(projects);
   } catch (error) {

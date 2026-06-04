@@ -40,7 +40,7 @@ export default function SettingsPage() {
             <label className="text-sm font-medium">Display Name</label>
             <input
               type="text"
-              defaultValue={user?.firstName}
+              defaultValue={user?.firstName ?? ''}
               className="input mt-1"
             />
           </div>

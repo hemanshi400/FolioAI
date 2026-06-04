@@ -35,23 +35,14 @@ export async function POST(request: NextRequest) {
         return NextResponse.json({ error: 'Invalid type' }, { status: 400 });
     }
 
-    const message = await openai.messages.create({
+    const response = await openai.responses.create({
       model: 'claude-3-5-sonnet-20241022',
-      max_tokens: 1024,
-      messages: [
-        {
-          role: 'user',
-          content: prompt,
-        },
-      ],
+      input: prompt,
     });
 
-    const responseContent = message.content[0];
-    if (responseContent.type !== 'text') {
-      throw new Error('Unexpected response type');
-    }
+    const resultText = response.output_text || '';
 
-    return NextResponse.json({ result: responseContent.text });
+    return NextResponse.json({ result: resultText });
   } catch (error) {
     console.error('AI API error:', error);
     return NextResponse.json(

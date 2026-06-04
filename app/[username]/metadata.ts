@@ -1,6 +1,4 @@
 import type { Metadata } from 'next';
-import { notFound } from 'next/navigation';
-import { generatePortfolioMetadata } from '@/lib/metadata';
 
 interface PortfolioParams {
   params: Promise<{ username: string }>;

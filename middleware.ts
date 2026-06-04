@@ -1,13 +1,17 @@
 import { NextResponse, type NextRequest } from 'next/server';
-import { clerkMiddleware, createRouteMatcher } from '@clerk/nextjs/server';
+import { clerkMiddleware } from '@clerk/nextjs/server';
 
-const isPublicRoute = createRouteMatcher([
-  '/',
-  '/sign-in(.*)',
-  '/sign-up(.*)',
-  '/api/portfolio(.*)',
-  '/[username]',
-]);
+const publicRoutePatterns: RegExp[] = [
+  /^\/$/, // root
+  /^\/sign-in/,
+  /^\/sign-up/,
+  /^\/api\/portfolio/,
+  /^\/[^/]+$/,
+];
+
+function isPublicPath(pathname: string) {
+  return publicRoutePatterns.some((re) => re.test(pathname));
+}
 
 const clerkConfigured = Boolean(
   process.env.NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY &&
@@ -16,7 +20,8 @@ const clerkConfigured = Boolean(
 
 const middlewareFunction = clerkConfigured
   ? clerkMiddleware((auth, request) => {
-      if (!isPublicRoute(request)) {
+      const pathname = request.nextUrl?.pathname || new URL(request.url).pathname || '/';
+      if (!isPublicPath(pathname)) {
         auth().protect();
       }
     })

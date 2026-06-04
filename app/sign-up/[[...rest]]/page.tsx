@@ -23,7 +23,7 @@ export default function SignUpPage() {
           </div>
           <div className="bg-white dark:bg-dark-800 rounded-xl border border-gray-200 dark:border-dark-700 p-8 shadow-lg">
             <div className="text-center py-12">
-              <SignUpComponent routing="hash" signInUrl="/sign-in" redirectUrl="/dashboard" />
+              <SignUpComponent />
             </div>
           </div>
         </div>

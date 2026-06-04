@@ -97,7 +97,7 @@ export default function OnboardingPage() {
       name: user.fullName || user.firstName || 'Your Name',
       headline: 'Professional Portfolio',
       bio: 'A polished portfolio showcasing my resume, skills, and projects.',
-      profileImage: user.profileImageUrl || undefined,
+      profileImage: (user as any).imageUrl || undefined,
       skills: [],
       projects: projects
         .filter(project => project.title.trim())

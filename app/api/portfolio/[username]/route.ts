@@ -1,4 +1,4 @@
-import { NextRequest, NextResponse } from 'next/server';
+import { NextResponse } from 'next/server';
 
 // Mock portfolio data - replace with actual database queries
 const mockPortfolios: Record<string, any> = {
@@ -54,21 +54,19 @@ const mockPortfolios: Record<string, any> = {
 };
 
 export async function GET(
-  request: Request,
+  _request: Request,
   { params }: { params: Promise<{ username: string }> }
 ) {
-  const { username } = await params;
-
-  // rest of your code
-}
-    const username = params.username.toLowerCase();
-    const portfolio = mockPortfolios[username];
+  try {
+    const { username } = await params;
+    const normalizedUsername = username.toLowerCase();
+    const portfolio = mockPortfolios[normalizedUsername];
 
     if (portfolio) {
       return NextResponse.json(portfolio);
     }
 
-    const fallbackName = username
+    const fallbackName = normalizedUsername
       .split(/[-_.]/g)
       .map(part => part.charAt(0).toUpperCase() + part.slice(1))
       .join(' ');
