@@ -15,31 +15,25 @@ const SignUpComponent = clerkConfigured
 export default function SignUpPage() {
   if (clerkConfigured && SignUpComponent) {
     return (
-      <div className="min-h-screen bg-gradient-to-br from-white via-primary-50 to-white dark:from-dark-950 dark:via-dark-900 dark:to-dark-950 flex items-center justify-center px-4">
-        <div className="w-full max-w-md">
-          <div className="text-center mb-8">
-            <h1 className="text-4xl font-bold gradient-text mb-2">FolioAI</h1>
-            <p className="text-gray-600 dark:text-gray-400 mb-8">Create your account</p>
-          </div>
-          <div className="bg-white dark:bg-dark-800 rounded-xl border border-gray-200 dark:border-dark-700 p-8 shadow-lg">
-            <div className="text-center py-12">
-              <SignUpComponent />
-            </div>
-          </div>
+      <div className="min-h-screen bg-gradient-to-br from-white via-primary-50 to-white dark:from-dark-950 dark:via-dark-900 dark:to-dark-950 flex flex-col items-center justify-center px-4 py-8">
+        <div className="w-full max-w-md text-center mb-6">
+          <h1 className="text-4xl font-bold gradient-text mb-2">FolioAI</h1>
+          <p className="text-gray-600 dark:text-gray-400">Create your account</p>
         </div>
+        <SignUpComponent />
       </div>
     );
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-white via-primary-50 to-white dark:from-dark-950 dark:via-dark-900 dark:to-dark-950 flex items-center justify-center px-4">
+    <div className="min-h-screen bg-gradient-to-br from-white via-primary-50 to-white dark:from-dark-950 dark:via-dark-900 dark:to-dark-950 flex items-center justify-center px-4 py-8">
       <div className="w-full max-w-md">
         <div className="text-center mb-8">
           <h1 className="text-4xl font-bold gradient-text mb-2">FolioAI</h1>
           <p className="text-gray-600 dark:text-gray-400 mb-8">Create your account</p>
         </div>
-        <div className="bg-white dark:bg-dark-800 rounded-xl border border-gray-200 dark:border-dark-700 p-8 shadow-lg">
-          <div className="text-center py-12">
+        <div className="bg-white dark:bg-dark-800 rounded-xl border border-gray-200 dark:border-dark-700 p-6 sm:p-8 shadow-lg">
+          <div className="text-center py-6 sm:py-12">
             <div className="text-4xl mb-4">🔐</div>
             <h2 className="text-xl font-bold mb-2">Clerk Not Configured</h2>
             <p className="text-gray-600 dark:text-gray-400 text-sm mb-6">

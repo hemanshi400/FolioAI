@@ -2,9 +2,15 @@ import { NextRequest, NextResponse } from 'next/server';
 import { auth } from '@clerk/nextjs/server';
 import { OpenAI } from 'openai';
 
-const openai = new OpenAI({
-  apiKey: process.env.OPENAI_API_KEY,
-});
+function createOpenAIClient() {
+  const apiKey = process.env.OPENAI_API_KEY;
+
+  if (!apiKey) {
+    throw new Error('OPENAI_API_KEY environment variable is missing');
+  }
+
+  return new OpenAI({ apiKey });
+}
 
 export async function POST(request: NextRequest) {
   try {
@@ -35,6 +41,7 @@ export async function POST(request: NextRequest) {
         return NextResponse.json({ error: 'Invalid type' }, { status: 400 });
     }
 
+    const openai = createOpenAIClient();
     const response = await openai.responses.create({
       model: 'claude-3-5-sonnet-20241022',
       input: prompt,
